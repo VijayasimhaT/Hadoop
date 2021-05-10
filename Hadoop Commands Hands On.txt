@@ -1,0 +1,120 @@
+Home directory of Linux VM is always /home/username
+so it is /home/<<LoginUserName>>/
+/home/focus7/
+
+Home directory of HDFS is always /user/username
+so it is /user/<<LoginUserName>>/
+/user/focus7/
+
+
+Help for all hadoop commands
+-------------------------------
+hadoop fs -help
+hadoop fs -help ls
+
+
+To get Hadoop version
+---------------------
+hadoop version
+
+
+To list all the hadoop file system commands
+-------------------------------------------
+hadoop fs
+
+
+To see all the files in a current directory
+---------------------------------------------
+hadoop fs -ls
+
+
+To create a directory in 
+---------------------------------------
+hadoop fs -mkdir /user/<<LoginUserName>>/<<YourName>>
+Ex: hadoop fs -mkdir /user/focus7/keerthi
+
+
+To delete a directory
+---------------------
+hadoop fs -rm -r /user/<<LoginUserName>>/<<YourName>>
+Ex: hadoop fs -rm -r /user/focus7/keerthi
+
+
+To copy a file from Linux into HDFS . Use either put command or copyFromLocal
+-------------------------------------------------------------------------------
+create files a.txt and b.txt in Linux 
+
+hadoop fs -put a.txt /user/<<LoginUserName>>/<<YourName>>
+Ex: hadoop fs -put a.txt /user/focus7/keerthi
+
+or
+hadoop fs -copyFromLocal b.txt /user/<<LoginUserName>>/<<YourName>>
+Ex: hadoop fs -copyFromLocal b.txt  /user/focus7/keerthi
+
+
+To display the data in the file
+-------------------------------
+hadoop fs -cat /user/<<LoginUserName>>/<<YourName>>/a.txt
+Ex: hadoop fs -cat /user/focus7/keerthi/a.txt
+
+
+To list the files
+------------------
+hadoop fs -ls /user/<<LoginUserName>>/<<YourName>>
+Ex: hadoop fs -ls /user/focus7/keerthi
+
+
+To copy a file from hdfs to Linux. Use either copyToLocal or get command
+---------------------------------------------------------------------------
+rm a.txt 
+
+hadoop fs -copyToLocal /user/<<LoginUserName>>/<<YourName>>/a.txt /home/<<LoginUserName>>/<<YourName>>/a.txt
+Ex: hadoop fs -copyToLocal /user/focus7/keerthi/a.txt /home/focus7/keerthi/a.txt
+
+
+hadoop fs -get /user/<<LoginUserName>>/<<YourName>>/a.txt /home/<<LoginUserName>>/<<YourName>>
+Ex: hadoop fs -get /user/focus7/keerthi/a.txt /home/focus7/keerthi
+
+
+To remove the entire directory
+------------------------------
+hadoop fs -rm -r /user/<<LoginUserName>>/<<YourName>>/
+Ex: hadoop fs -rm -r /user/focus7/keerthi/
+
+
+To get the amount of space used and available on filesystem
+-----------------------------------------------------------
+hadoop fs -df hdfs:/
+
+
+Ctrl C - To break a process
+Exit - Exit from VM
+
+
+To see all the commands we executed in VM
+-------------------------------------------
+History
+
+
+To combine all the part files
+----------------------------------
+1. Create 2 files sample1.txt and sample2.txt
+
+2. Place it in hdfs under <<YourName>> directory
+hadoop fs -put sample1.txt /user/<<LoginUserName>>/<<YourName>>
+hadoop fs -put sample2.txt /user/<<LoginUserName>>/<<YourName>>
+
+3. Check the files in HDFS
+hadoop fs -ls /user/<<LoginUserName>>/<<YourName>>
+
+4. Merge the 2 files into single
+hadoop fs -getmerge keerthi keerthisamplefile.txt
+hadoop fs -getmerge /user/<<LoginUserName>>/<<YourName>>/sample1.txt /user/<<LoginUserName>>/<<YourName>>/sample2.txt samplefile.txt
+
+
+cat samplefile.txt
+All the part files under "<<YourName>>" directory will be combined and saved in samplefile.txt and moved to local file system
+
+
+
+
