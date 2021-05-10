@@ -1,0 +1,105 @@
+import org.apache.spark.sql.SparkSession
+
+val spark = SparkSession
+      .builder
+      .appName("DFExample")
+      .config("spark.master", "local")
+      .getOrCreate()
+
+
+
+val deptdf = spark.read.json("/FileStore/tables/department.json")
+deptdf.printSchema()
+deptdf.select("ssn","dept").show()
+
+
+val ppldf = spark.read.json("/FileStore/tables/people.json")
+ppldf.printSchema()
+ppldf.show()
+
+
+val joinresult = deptdf.join(ppldf, deptdf("ssn") === ppldf("ssn"))
+joinresult.select("name", "city","dept").show()
+
+
+val rightjoinresult = deptdf.join(ppldf, deptdf("ssn") === ppldf("ssn"),"right_outer")
+rightjoinresult.show
+
+
+val result = joinresult.select("dept","age","city","gender","name")
+result.show
+
+joinresult.explain(true)
+
+---------------------------------------------------------
+// Prevent duplicated columns when joining two DataFrames
+------------------------------------------------------------
+/* If you perform a join in Spark and don’t specify your join correctly you’ll end up with duplicate column names. This makes it harder to select those columns. If you join on columns, you get duplicated columns. Specify the join column as an array type or string . 
+df1.join(df2, Seq("ts","id"),"TYPE-OF-JOIN")*/
+
+// deptdf.join(ppldf, Seq("ssn"))
+
+val joinresultduplicate = deptdf.join(ppldf, "ssn")
+
+joinresultduplicate.show()
+joinresultduplicate.select("ssn").show()
+
+
+// Left Outer
+val joinresultduplicateleft = deptdf.join(ppldf, Seq("ssn"),"left_outer")
+joinresultduplicateleft.show()
+
+----------------------
+// Broadcast Join
+--------------------
+spark.conf.get("spark.sql.autoBroadcastJoinThreshold")
+//Broadcast Join - LargeDataFrame.join(broadcast(smallDataFrame), "key")
+
+import org.apache.spark.sql.functions.broadcast;
+import org.apache.spark.sql.functions.col;
+
+val joinbroadresult = ppldf.join(broadcast(deptdf),"ssn")
+
+// val joinbroadresult = ppldf.join(broadcast(deptdf), col("deptdf.ssnid").equalTo (col("ppldf.ssn")))
+joinbroadresult.select("name", "city","dept").show()
+
+joinbroadresult.explain()
+
+joinbroadresult.cache()
+
+
+joinresult.createOrReplaceTempView("people_dept")
+val fdocdf= sqlContext.sql("SELECT city, count(*) as cnt FROM people_dept WHERE gender = 'F' and dept = 'Doctor' GROUP BY city ORDER BY cnt DESC LIMIT 10")
+fdocdf.show()
+
+---------------------
+Save to HDFS/DBFS
+-------------------
+val fdocrdd = fdocdf.rdd
+fdocrdd.saveAsTextFile("/FileStore/tables/jsonout")
+
+----------------
+Hive
+----------------
+
+// Here it show Databrick storage tables, with hive, it will show hive tables
+spark.sql("show tables").show
+
+// Store the joined data in hive table
+result.write.saveAsTable("deptppljointable" )
+
+// Here it show Databrick storage tables, with hive, it will show hive tables
+spark.sql("show tables").show
+
+// Get and see the hive table data which we created
+val hiveresult = spark.sql("select * from deptppljointable")
+hiveresult.show()
+
+hiveresult.printSchema()
+
+
+
+
+
+
+
