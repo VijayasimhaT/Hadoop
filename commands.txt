@@ -1,0 +1,14 @@
+1.To create directory - mkdir foldername
+2.To change the directory - cd foldername
+3.To list the files present under the directory - ls -lrt
+4.To create empty file - touch filename
+5.To insert data into the file - vi filename
+   Steps: 1.press "i" to insert the data into the file
+          2.To Exit from insert mode press "Esc" button
+          3.To save & Exit - :wq!
+6.without save only Exit - :q! 
+7.view command used for only read the data
+8.To display the file data - cat filename
+9.To copy the file from one to another directory - cp source destination
+                                        Example  - cp a.txt /home/focus7/jyothi
+10.To delete the file in a directory - rm filename
